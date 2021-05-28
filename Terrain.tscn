@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Assets/Terrain/Bush/Bush-small-1-apples.png" type="Texture" id=1]
+
+[node name="Terrain" type="Node2D"]
+
+[node name="Bush-small-1-apples" type="Sprite" parent="."]
+position = Vector2( 424.998, 312.516 )
+texture = ExtResource( 1 )
