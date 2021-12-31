@@ -36,11 +36,6 @@ animations = [ {
 "name": "disappear",
 "speed": 18.0
 }, {
-"frames": [ ExtResource( 7 ), ExtResource( 6 ) ],
-"loop": true,
-"name": "walk",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 8 ), ExtResource( 11 ), ExtResource( 5 ), ExtResource( 9 ) ],
 "loop": true,
 "name": "standing",
@@ -50,6 +45,11 @@ animations = [ {
 "loop": true,
 "name": "appear",
 "speed": 18.0
+}, {
+"frames": [ ExtResource( 7 ), ExtResource( 6 ) ],
+"loop": true,
+"name": "walk",
+"speed": 5.0
 } ]
 
 [sub_resource type="SpriteFrames" id=2]
@@ -64,11 +64,6 @@ animations = [ {
 "name": "disappear",
 "speed": 18.0
 }, {
-"frames": [ ExtResource( 27 ), ExtResource( 28 ) ],
-"loop": true,
-"name": "walk",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 3 ), ExtResource( 4 ), ExtResource( 1 ), ExtResource( 10 ) ],
 "loop": true,
 "name": "standing",
@@ -78,6 +73,11 @@ animations = [ {
 "loop": true,
 "name": "appear",
 "speed": 18.0
+}, {
+"frames": [ ExtResource( 27 ), ExtResource( 28 ) ],
+"loop": true,
+"name": "walk",
+"speed": 5.0
 } ]
 
 [sub_resource type="CircleShape2D" id=3]

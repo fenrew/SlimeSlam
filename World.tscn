@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://Player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Assets/Terrain/Background/Background.png" type="Texture" id=2]
@@ -13,6 +13,7 @@
 [ext_resource path="res://Abilities/Sludge.tscn" type="PackedScene" id=11]
 [ext_resource path="res://Assets/Abilities/Sludge/Animation/Sludge Spell Icon.png" type="Texture" id=12]
 [ext_resource path="res://Abilities/Zimp.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Abilities/Portal.tscn" type="PackedScene" id=14]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
@@ -87,6 +88,7 @@ Spit = ExtResource( 3 )
 Warp = ExtResource( 8 )
 Sludge = ExtResource( 11 )
 Zimp = ExtResource( 13 )
+Portal = ExtResource( 14 )
 
 [node name="SludgeCooldown" type="Timer" parent="Player"]
 wait_time = 10.0
@@ -341,13 +343,13 @@ texture_normal = ExtResource( 6 )
 COOLDOWN = 6.0
 BUFF_NAME = "spit_stack"
 
-[connection signal="buff_activated" from="Player" to="HUD/Resources/SpitBuffTimer" method="_on_Player_buff_activated"]
 [connection signal="buff_activated" from="Player" to="HUD/Resources/WarpBuffTimer" method="_on_Player_buff_activated"]
+[connection signal="buff_activated" from="Player" to="HUD/Resources/SpitBuffTimer" method="_on_Player_buff_activated"]
 [connection signal="buff_deactivated" from="Player" to="HUD/Resources/WarpBuffTimer" method="_on_Player_buff_deactivated"]
 [connection signal="cast_ability" from="Player" to="HUD/Resources/SludgeAbilityButton" method="_on_Player_cast_ability"]
-[connection signal="cast_ability" from="Player" to="HUD/Resources/SpitAbilityButton" method="_on_Player_cast_ability"]
-[connection signal="cast_ability" from="Player" to="HUD/Resources/WarpAbilityButton" method="_on_Player_cast_ability"]
 [connection signal="cast_ability" from="Player" to="HUD/Resources/ZimpAbilityButton" method="_on_Player_cast_ability"]
+[connection signal="cast_ability" from="Player" to="HUD/Resources/WarpAbilityButton" method="_on_Player_cast_ability"]
+[connection signal="cast_ability" from="Player" to="HUD/Resources/SpitAbilityButton" method="_on_Player_cast_ability"]
 [connection signal="timeout" from="Player/SpitCooldown/SpitDamageReset" to="Player" method="_on_SpitDamageReset_timeout"]
 [connection signal="pressed" from="HUD/Resources/SpitAbilityButton" to="HUD/Resources/SpitAbilityButton" method="_on_AbilityButton_pressed"]
 [connection signal="timeout" from="HUD/Resources/SpitAbilityButton/Timer" to="HUD/Resources/SpitAbilityButton" method="_on_Timer_timeout"]

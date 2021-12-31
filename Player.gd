@@ -1,22 +1,26 @@
 extends KinematicBody2D
 
-export (int) var speed = 300
+export (int) var SPEED = 300
 export (int) var MAX_HEALTH = 500
+export (int) var DASH_RANGE = 300
 
 export (PackedScene) var Spit
 export (PackedScene) var Warp
 export (PackedScene) var Sludge
 export (PackedScene) var Zimp
+export (PackedScene) var Portal
 
 signal cast_ability(ability)
 signal buff_activated(buff)
 signal buff_deactivated(buff)
+signal reached_movement_target()
 
 onready var zimp_inst = Zimp.instance()
 
 var WARP_RANGE = 300
 
 var current_health = MAX_HEALTH
+var current_speed = SPEED
 # Contains Name of slow and multiplier
 var speed_multipliers = []
 var speed_multiplier = 1
@@ -26,6 +30,9 @@ var spit_stack = 1
 var before_warp_position = Vector2.ZERO
 var sludge_inst = null
 var is_zimp_home = true
+var portals: Array = []
+var dashing = false
+var previous_pos = Vector2.ZERO
 
 
 func _input(event):
@@ -45,15 +52,23 @@ func _input(event):
 			shoot_zimp()
 		else:
 			zimp_inst.return_home(position)
+	if Input.is_action_just_pressed("spell_slot_five"):
+		portal()
+	if Input.is_action_just_pressed("spell_slot_six"):
+		dash()
 
 
 func _physics_process(_delta):
-	velocity = (target - position).normalized() * speed * speed_multiplier
+	velocity = (target - position).normalized() * current_speed * speed_multiplier
 	# rotation = velocity.angle()
 	if (target - position).length() > 5:
 		velocity = move_and_slide(velocity)
 		$Ooze.animation = "walk"
 		$Ooze/Hat.animation = "walk"
+	elif not $Ooze.animation == "standing":
+		$Ooze.animation = "standing"
+		$Ooze/Hat.animation = "standing"
+		emit_signal("reached_movement_target")
 	else:
 		$Ooze.animation = "standing"
 		$Ooze/Hat.animation = "standing"
@@ -90,14 +105,16 @@ func update_speed_multiplier():
 	speed_multiplier = new_multiplier
 
 
-func get_closest_unoccupied_position(target_pos: Vector2, max_iterations: int):
+func get_closest_unoccupied_position(target_pos: Vector2, max_iterations: int, self_position = null):
+	if not self_position:
+		self_position = position
 	var iteration = 0
 	var updated_vector_pos = target_pos
 	
 	while iteration < max_iterations:
 		if $FullBodyCollision.check_position_for_collision(updated_vector_pos).size() > 0:
-			var length_of_vector = (target_pos - position).length()
-			updated_vector_pos = position + ((updated_vector_pos - position).normalized() * (length_of_vector-20 * iteration))
+			var length_of_vector = (target_pos - self_position).length()
+			updated_vector_pos = self_position + ((updated_vector_pos - self_position).normalized() * (length_of_vector-20 * iteration))
 			
 			iteration += 1
 		else:
@@ -170,6 +187,40 @@ func warp():
 		$Ooze/Hat.frame = 0
 		$Ooze.animation = "appear"
 		$Ooze/Hat.animation = "appear"
+
+
+func portal():
+	var portal_inst = Portal.instance()
+	get_parent().add_child(portal_inst)
+	portals.push_front(portal_inst)
+	for each_portal in portals:
+		each_portal.cast(self)
+	if portals.size() > 2:
+		portals.pop_back()
+
+
+func dash():
+	var target_pos = get_global_mouse_position()
+	if(target_pos - position).length() > DASH_RANGE:
+		target_pos = position + (target_pos - position).normalized() * DASH_RANGE
+	target_pos = get_closest_unoccupied_position(target_pos, 20)
+	if not target_pos:
+		target_pos = position
+	
+	set_process_input(false)
+	$FullBodyCollision.disabled = true
+	$HalfBodyCollision.disabled = true
+	
+	target = target_pos
+	current_speed = 1500
+	previous_pos = position
+	
+	yield(self, "reached_movement_target")
+	
+	current_speed = SPEED
+	$FullBodyCollision.disabled = false
+	set_process_input(true)
+
 
 func _on_Spit_spell_hit():
 	emit_signal("buff_activated", "spit_stack", str(spit_stack))
